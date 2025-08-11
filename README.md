@@ -6,7 +6,7 @@ Frontend built with React + Vite + TypeScript. Uses Nhost Auth and GraphQL (Apol
 Create `web/.env` with either subdomain+region or backend URL:
 
 ```
-VITE_NHOST_SUBDOMAIN=xxx
+VITE_NHOST_SUBDOMAIN=izeacxcrsywmyxhlccid
 VITE_NHOST_REGION=eu-central-1
 # Or
 # VITE_NHOST_BACKEND_URL=https://xxxxx.nhost.run
