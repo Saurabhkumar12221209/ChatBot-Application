@@ -20,8 +20,7 @@ npm run dev
 ```
 
 ### Deploy (Netlify)
-https://app.netlify.com/projects/chatbotapplication1/overview
-
+https://chatbotapplication0.netlify.app/
 ### GraphQL Schema (Hasura)
 - Table `chats`: id uuid PK, user_id uuid, title text, updated_at timestamptz
 - Table `messages`: id uuid PK, chat_id uuid FK, user_id uuid, role text ('user'/'assistant'), content text, created_at timestamptz
