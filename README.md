@@ -20,7 +20,7 @@ npm run dev
 ```
 
 ### Deploy (Netlify)
-Add the same env vars in Site settings → Environment. Ensure SPA redirect via `public/_redirects` is included.
+https://app.netlify.com/projects/chatbotapplication1/overview
 
 ### GraphQL Schema (Hasura)
 - Table `chats`: id uuid PK, user_id uuid, title text, updated_at timestamptz
