@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { NhostProvider, useAuthenticated, useAuthenticationStatus } from '@nhost/react'
 import { nhost } from '../nhost'
 import { ApolloProvider } from '@apollo/client'
