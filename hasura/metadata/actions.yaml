@@ -1,0 +1,18 @@
+actions:
+  - name: sendMessage
+    definition:
+      kind: synchronous
+      handler: '{{N8N_WEBHOOK_URL}}'
+      forward_client_headers: true
+      headers:
+        - name: X-Hasura-Role
+          value: user
+    permissions:
+      - role: user
+custom_types:
+  enums: []
+  input_objects: []
+  objects:
+    - name: SendMessageOutput
+  scalars: []
+
