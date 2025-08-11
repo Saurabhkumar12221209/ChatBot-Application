@@ -29,3 +29,4 @@ create policy messages_isolation on public.messages
   with check (user_id = (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-user-id')::uuid);
 
 
+

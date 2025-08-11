@@ -5,13 +5,13 @@ import { ChatsPage } from './ui/chats/ChatsPage'
 import { ChatPage } from './ui/chats/ChatPage'
 
 export const router = createBrowserRouter([
+  { path: '/auth', element: <AuthPage /> },
   {
     path: '/',
     element: <AppLayout />,
     children: [
       { index: true, element: <ChatsPage /> },
       { path: 'chats/:chatId', element: <ChatPage /> },
-      { path: 'auth', element: <AuthPage /> },
     ],
   },
 ])

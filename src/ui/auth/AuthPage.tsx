@@ -1,14 +1,10 @@
-import { NhostProvider, useAuthenticationStatus } from '@nhost/react'
+import { useAuthenticationStatus } from '@nhost/react'
 import { nhost } from '../../nhost'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export function AuthPage() {
-  return (
-    <NhostProvider nhost={nhost}>
-      <AuthForm />
-    </NhostProvider>
-  )
+  return <AuthForm />
 }
 
 function AuthForm() {

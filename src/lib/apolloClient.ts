@@ -5,8 +5,18 @@ import { createClient as createWsClient } from 'graphql-ws'
 import { nhost } from '../nhost'
 import { setContext } from '@apollo/client/link/context'
 
+// Create a fallback URI in case Nhost is not properly configured
+const getGraphQLUri = () => {
+  try {
+    return nhost.graphql.getUrl()
+  } catch (error) {
+    console.warn('⚠️  Nhost not properly configured, using fallback URI')
+    return 'https://demo.nhost.run/v1/graphql'
+  }
+}
+
 const httpLink = new HttpLink({
-  uri: nhost.graphql.getUrl(),
+  uri: getGraphQLUri(),
 })
 
 const authLink = setContext(async (_, { headers }) => {
@@ -20,10 +30,16 @@ const authLink = setContext(async (_, { headers }) => {
 })
 
 // Derive ws url from http url
-const httpUrl = nhost.graphql.getUrl()
-const url = new URL(httpUrl)
-url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
-const wsUrl = url.toString()
+let wsUrl: string
+try {
+  const httpUrl = nhost.graphql.getUrl()
+  const url = new URL(httpUrl)
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
+  wsUrl = url.toString()
+} catch (error) {
+  console.warn('⚠️  WebSocket URL generation failed, using fallback')
+  wsUrl = 'wss://demo.nhost.run/v1/graphql'
+}
 
 const wsLink = new GraphQLWsLink(
   createWsClient({
