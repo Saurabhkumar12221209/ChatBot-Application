@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",
+    "@nhost/apollo": "^9.0.0",
     "@nhost/nhost-js": "^3.3.0",
     "@nhost/react": "^3.11.1",
     "cross-fetch": "^4.1.0",

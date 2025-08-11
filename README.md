@@ -1,69 +1,42 @@
-# React + TypeScript + Vite
+## Chatbot Application (Nhost + Hasura + n8n)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend built with React + Vite + TypeScript. Uses Nhost Auth and GraphQL (Apollo) with subscriptions. All API calls are GraphQL-only. Bot replies are triggered via Hasura Action → n8n → OpenRouter.
 
-Currently, two official plugins are available:
+### Env
+Create `web/.env` with either subdomain+region or backend URL:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+VITE_NHOST_SUBDOMAIN=xxx
+VITE_NHOST_REGION=eu-central-1
+# Or
+# VITE_NHOST_BACKEND_URL=https://xxxxx.nhost.run
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Run locally
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+npm install
+npm run dev
+```
+
+### Deploy (Netlify)
+Add the same env vars in Site settings → Environment. Ensure SPA redirect via `public/_redirects` is included.
+
+### GraphQL Schema (Hasura)
+- Table `chats`: id uuid PK, user_id uuid, title text, updated_at timestamptz
+- Table `messages`: id uuid PK, chat_id uuid FK, user_id uuid, role text ('user'/'assistant'), content text, created_at timestamptz
+
+RLS: only `user` role can `select/insert/update/delete` rows where `user_id = X-Hasura-User-Id`. Expose only `user` role to the app.
+
+### Hasura Action
+- Action name: `sendMessage(chat_id: uuid!, content: String!): { reply: String! }`
+- Handler: n8n webhook URL
+- Permissions: only `user` role, authenticated only
+
+### n8n Workflow (outline)
+1) Webhook (POST). Read `session_variables['x-hasura-user-id']` and `input.body.chat_id`.
+2) Validate `chat_id` belongs to user via Hasura GraphQL.
+3) Insert user message if not yet present (optional, we insert in frontend already).
+4) Call OpenRouter API using credentials.
+5) Insert assistant message into Hasura.
+6) Return `{ reply }` back to Action.
